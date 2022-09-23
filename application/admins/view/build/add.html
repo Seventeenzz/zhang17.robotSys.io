@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/plugins//layui/css/layui.css">
+    <script type="text/javascript" src="__STATIC__/plugins/layui/layui.js"></script>
+</head>
+<body style="padding: 10px;">
+<form class="layui-form">
+    <div class="layui-upload layui-form-item">
+        <button type="button" class="layui-btn layui-btn-normal" id="test8">选择文件</button>
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" id="test9">开始上传</button>
+        </div>
+
+    </div>
+
+</form>
+
+<script type="text/javascript">
+    layui.use(['layer','form','upload'],function () {
+        form = layui.form;
+        layer = layui.layer;
+        var upload = layui.upload;
+        $ = layui.jquery;
+
+        var uploadInst = upload.render({
+            elem: '#upload_img' //绑定元素
+            ,url: '/admins.php/admins/uploads/upload_img' //上传接口
+            ,accept:'images'
+            ,done: function(res){
+                //上传完毕回调
+                $('#pre_img').attr('src', res.msg);
+                $('input[name="img"]').val(res.msg);
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+    });
+
+    function save() {
+        var id = parseInt($.trim($('input[name="id"]').val()));
+        var username = $.trim($('input[name="username"]').val());
+        var pwd = $.trim($('input[name="pwd"]').val());
+        var gid = $('select[name="gid"]').val();
+        var truename = $.trim($('input[name="truename"]').val());
+        if (username == ''){
+            layer.alert('请输入用户名',{icon:2});
+            return;
+        }
+        if (isNaN(id) && pwd == ''){
+            layer.alert('请输入密码',{icon:2});
+            return;
+        }
+        if (gid == 0){
+            layer.alert('请选择角色',{icon:2});
+        }
+        if (truename == ''){
+            layer.alert('请输入真实姓名',{icon:2});
+            return;
+        }
+        $.post('/admins.php/admins/member/save', $('form').serialize(), function (res) {
+            if (res.code > 0){
+                layer.alert(res.msg, {icon:2});
+            } else {
+                layer.msg(res.msg,{'icon':1});
+                setTimeout(function () {parent.window.location.reload();}, 1000);
+            }
+        }, 'json');
+    }
+
+</script>
+</body>
+</html>

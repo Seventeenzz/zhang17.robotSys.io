@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/plugins//layui/css/layui.css">
+    <script type="text/javascript" src="__STATIC__/plugins/layui/layui.js"></script>
+</head>
+<body style="padding: 10px;">
+<form class="layui-form">
+    <input type="hidden" name="aid" value="{$data.article.aid}">
+    <div class="layui-form-item">
+        <label class="layui-form-label">标&nbsp;&nbsp;&nbsp;&nbsp;题</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="title" value="{$data.article.title}">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">作&nbsp;&nbsp;&nbsp;&nbsp;者</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" name="author" value="{$data.article.author}">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">内&nbsp;&nbsp;&nbsp;&nbsp;容</label>
+        <div class="layui-input-block">
+            <textarea placeholder="请输入内容" class="layui-textarea" name="content">{$data.article.content}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">类&nbsp;&nbsp;&nbsp;&nbsp;型</label>
+        <div class="layui-input-inline">
+            <select name="tid">
+                <option value="0"></option>
+                {volist name="data.type" id="vo"}
+                <option value="{$vo.tid}" {$vo.tid == $data.article.tid ? 'selected' : ''}>{$vo.title}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;态</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="status" lay-skin="primary" title="禁止" value="1" {$data.article.status?'checked':''}>
+        </div>
+    </div>
+</form>
+
+<div class="layui-form-item">
+    <div class="layui-input-block">
+        <button class="layui-btn" onclick="save()">保存</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['layer','form'],function () {
+        form = layui.form;
+        layer = layui.layer;
+        $ = layui.jquery;
+
+    });
+
+    function save() {
+        var title = $.trim($('input[name="title"]').val());
+        var author = $.trim($('input[name="author"]').val());
+        var content = $.trim($('textarea[name="content"]').val());
+        var tid = $('select[name="tid"]').val();
+        if (title == ''){
+            layer.alert('请输入标题',{icon:2});
+            return;
+        }
+        if (author == ''){
+            layer.alert('请输入作者',{icon:2});
+            return;
+        }
+        if (content == ''){
+            layer.alert('请输入内容',{icon:2});
+            return;
+        }
+        if (tid == 0){
+            layer.alert('请选择类型',{icon:2});
+        }
+        $.post('/admins.php/admins/article/save', $('form').serialize(), function (res) {
+            if (res.code > 0){
+                layer.alert(res.msg, {'icon':2});
+            } else {
+                layer.msg(res.msg,{'icon':1});
+                setTimeout(function () {parent.window.location.reload();}, 1000);
+            }
+        }, 'json');
+    }
+
+</script>
+</body>
+</html>

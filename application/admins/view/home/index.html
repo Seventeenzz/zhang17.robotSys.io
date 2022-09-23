@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>机器人基地</title>
+    <link rel="stylesheet" type="text/css" href="__STATIC__/plugins//layui/css/layui.css">
+    <script type="text/javascript" src="__STATIC__/plugins/layui/layui.js"></script>
+    <style type="text/css">
+        .layui-collapse{border: none;}
+        .layui-colla-item{border: none; color:  black;}
+        .layui-colla-title{background: #393D49; color: white;}
+        .layui-colla-content{padding: 0px;}
+    </style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo" style="font-size: 35px; color: gray;">机器人基地</div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="{$data.admin['user_img']}" class="layui-nav-img">
+                    {$data.admin['truename']}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">个人中心</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="javascript:;" onclick="logout()">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black" id="menu">
+        <div class="layui-collapse" lay-accordion>
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">用户管理</h2>
+                <div class="layui-colla-content layui-show">
+                    <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                        <li class="layui-nav-item"><a href="javascript:;" onclick="menuFile(this)" src="/admins.php/admins/admin/index">管理员列表</a></li>
+                        <li class="layui-nav-item"><a href="javascript:;" onclick="menuFile(this)" src="/admins.php/admins/member/index">成员列表</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">基地建设</h2>
+                <div class="layui-colla-content">
+                    <ul class="layui-nav layui-nav-tree"ulay-filter="test">
+                        <li class="layui-nav-item"><a href="javascript:;" onclick="menuFile(this)" src="/admins.php/admins/build/check">考勤管理</a></li>
+                        <li class="layui-nav-item"><a href="javascript:;" onclick="menuFile(this)" src="/admins.php/admins/build/exhibit">展评管理</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">文章管理</h2>
+                <div class="layui-colla-content">
+                    <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                        <li class="layui-nav-item"><a href="javascript:;" onclick="menuFile(this)" src="/admins.php/admins/article/index">文章列表</a></li>
+                        <li class="layui-nav-item"><a href="javascript:;" onclick="menuFile(this)" src="/admins.php/admins/article/type">类型管理</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">幻灯片管理</h2>
+                <div class="layui-colla-content">
+                    <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                        <li class="layui-nav-item"><a href="javascript:;" onclick="menuFile(this)" src="">幻灯片列表</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <iframe src="/admins.php/admins/Home/welcome" onload="resetMainHeight(this)" style="width: 100%; height: 100%" frameborder="0" scrolling="0"></iframe>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © robot.com - 电子工程学院机器人基地
+    </div>
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer'], function(){
+        var element = layui.element;
+        layer = layui.layer;
+        $ = layui.jquery;
+
+        resetMenuHeight();
+    });
+    //重新设置页面菜单容器高度
+    function resetMenuHeight() {
+        var height = document.documentElement.clientHeight - 50;
+        $('#menu').height(height);
+    }
+    // 重新设置主操作页面的高度
+    function resetMainHeight(obj) {
+        var height = parent.document.documentElement.clientHeight - 53;
+        $(obj).parent('div').height(height);
+    }
+
+    function menuFile(obj) {
+        //获取url
+        var src = $(obj).attr('src');
+        //设置iframe的src
+        $('iframe').attr('src', src);
+    }
+    //退出
+    function logout() {
+        layer.confirm('确定要退出吗？', {
+            icon:3
+            ,btn: ['确定','取消'] //按钮
+        }, function(){
+            $.get('/admins.php/admins/account/logout',function (res) {
+                if (res.code>0){
+                    layer.msg(res.msg, {'icon':2});
+                }else {
+                    layer.msg(res.msg, {'icon':1});
+                    setTimeout(function () {window.location.href="/admins.php/admins/account/login"},1000);
+                }
+            },'json');
+        });
+    }
+
+</script>
+</body>
+</html>
